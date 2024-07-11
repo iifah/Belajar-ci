@@ -37,7 +37,7 @@ class ProdukController extends BaseController
     if ($dataFoto->isValid()) {
         $fileName = $dataFoto->getRandomName();
         $dataForm['foto'] = $fileName;
-        $dataFoto->move('NiceAdmin/assets/img/', $fileName);
+        $dataFoto->move('img/', $fileName);
     }
 
     $this->product->insert($dataForm);

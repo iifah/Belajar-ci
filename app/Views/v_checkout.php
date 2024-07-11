@@ -19,21 +19,21 @@
             <select class="form-select" id="provinsi">
                 <option>Silakan pilih provinsi</option>
                 <?php foreach ($provinsi as $p) : ?>
-                    <option value="<?= $p->province_id ?>"><?= $p->province ?></option>
-                <?php endforeach ?>
-            </select>
-        </div>
+                 <option value="<?= $p->province_id ?>"><?= $p->province ?></option>
+             <?php endforeach ?>
+            </select>      
+         </div>
         <div class="col-12">
             <label for="kabkota" class="form-label">Kab/Kota</label>
             <select class="form-select" id="kabupaten">
-                <option>Silahkan Pilih Kab/Kota</option>
-            </select>
+                <option>Silakan pilih Kab/Kota</option>
+            </select>       
         </div>
         <div class="col-12">
             <label for="layanan" class="form-label">Layanan</label>
             <select class="form-select" id="service">
-                <option>Silahkan Pilih Layanan</option>
-            </select>
+                <option>Silakan pilih Layanan</option>
+            </select>        
         </div>
         <div class="col-12">
             <label for="ongkir" class="form-label">Ongkir</label>
@@ -90,85 +90,84 @@
     </div>
 </div>
 <?= $this->endSection() ?>
-
 <?= $this->section('script') ?>
 <script>
-    $('document').ready(function)() {
-    var ongkir = 0;
-    var total = 0;
+    $('document').ready(function() {
+        var ongkir = 0;
+        var total = 0;
 
-    $("#provinsi").on('change', function() {
-        $("#kabupaten").empty();
-        $("#service").empty();
-        ongkir = 0;
+        $("#provinsi").on('change', function() {
+            $("#kabupaten").empty();
+            $("#service").empty();
+            ongkir = 0;
 
-        var id_province = $(this).val();
+            var id_province = $(this).val();
 
-        $.ajax({
-            url: "<?= site_url('getcity') ?>",
-            type: 'GET',
-            data: {
-                'id_province': id_province,
-            },
-            dataType: 'json',
-            success: function(data) {
-                //console.log(data);
-                var results = data["rajaongkir"]["results"];
-                for (var i = 0; i < results.length; i++) {
-                    $("#kabupaten").append($('<option>', {
-                        value: results[i]["city_id"],
-                        text: results[i]['type'] + " " + results[i]['city_name']
-                    }));
-                }
-                hitungTotal();
-            },
+            $.ajax({
+                url: "<?= site_url('getcity') ?>",
+                type: 'GET',
+                data: {
+                    'id_province': id_province,
+                },
+                dataType: 'json',
+                success: function(data) {
+                    //console.log(data);
+                    var results = data["rajaongkir"]["results"];
+                    for (var i = 0; i < results.length; i++) {
+                        $("#kabupaten").append($('<option>', {
+                            value: results[i]["city_id"],
+                            text: results[i]['type'] + " " + results[i]['city_name']
+                        }));
+                    }
+                    hitungTotal();
+                },
 
+            });
         });
-    });
 
-    $("#kabupaten").on('change', function() {
-        var id_city = $(this).val();
-        $("#service").empty();
-        ongkir = 0;
+        $("#kabupaten").on('change', function() {
+            var id_city = $(this).val();
+            $("#service").empty();
+            ongkir = 0;
 
-        $.ajax({
-            url: "<?= site_url('getcost') ?>",
-            type: 'GET',
-            data: {
-                'origin': 399,
-                'destination': id_city,
-                'weight': 1000,
-                'courier': 'jne'
-            },
-            dataType: 'json',
-            success: function(data) {
-                //console.log(data);
-                var results = data["rajaongkir"]["results"][0]["costs"];
-                for (var i = 0; i < results.length; i++) {
-                    var text = results[i]["description"] + "(" + results[i]["service"] + ")";
-                    $("#service").append($('<option>', {
-                        value: results[i]["cost"][0]["value"],
-                        text: text
-                    }));
-                }
-                hitungTotal();
-            },
+            $.ajax({
+                url: "<?= site_url('getcost') ?>",
+                type: 'GET',
+                data: {
+                    'origin': 399,
+                    'destination': id_city,
+                    'weight': 1000,
+                    'courier': 'jne'
+                },
+                dataType: 'json',
+                success: function(data) {
+                    //console.log(data);
+                    var results = data["rajaongkir"]["results"][0]["costs"];
+                    for (var i = 0; i < results.length; i++) {
+                        var text = results[i]["description"] + "(" + results[i]["service"] + ")";
+                        $("#service").append($('<option>', {
+                            value: results[i]["cost"][0]["value"],
+                            text: text 
+                        }));
+                    }
+                    hitungTotal();
+                },
 
+            });
         });
-    });
 
-    $("#service").on('change', function() {
-        ongkir = parseInt($(this).val());
-        hitungTotal();
-    });
+        $("#service").on('change', function() {
+            ongkir = parseInt($(this).val());
+            hitungTotal();
+        });
 
-    function hitungTotal() {
-        total = ongkir + <?= $total ?>;
+        function hitungTotal() {
+            total = ongkir + <?= $total ?>;
 
-        $("#ongkir").val(ongkir);
-        $("#total").html("IDR " + total.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'));
-        $("#total_harga").val(total);
-    }
+            $("#ongkir").val(ongkir);
+            $("#total").html("IDR " + total.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'));
+            $("#total_harga").val(total);
+        }
     });
 </script>
 <?= $this->endSection() ?>

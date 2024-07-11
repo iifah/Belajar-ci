@@ -46,8 +46,8 @@ if (session()->getFlashData('failed')) {
                 <td><?php echo $produk['harga'] ?></td>
                 <td><?php echo $produk['jumlah'] ?></td>
                 <td>
-                    <?php if ($produk['foto'] != '' and file_exists("NiceAdmin/assets/img/" . $produk['foto'] . "")) : ?>
-                        <img src="<?php echo base_url() . "NiceAdmin/assets/img/" . $produk['foto'] ?>" width="100px">
+                    <?php if ($produk['foto'] != '' and file_exists("img/" . $produk['foto'] . "")) : ?>
+                        <img src="<?php echo base_url() . "img/" . $produk['foto'] ?>" width="100px">
                     <?php endif; ?>
                 </td>
                 <td>
