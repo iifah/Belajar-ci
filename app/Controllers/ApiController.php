@@ -12,7 +12,7 @@ use App\Models\TransactionDetailModel;
 
 class ApiController extends ResourceController
 {
-    protected $apikey = "8f172d7b783b9dcfd82059b098b515a3";
+    protected $apiKey = "8f172d7b783b9dcfd82059b098b515a3";
     protected $user;
     protected $transaction;
     protected $transaction_detail;
@@ -131,9 +131,42 @@ class ApiController extends ResourceController
 
     return $this->respond($data);
 }
-public function monthlyGet()
-{
-    $transactions = $this->transaction->where('created_at >=', date('Y-m-01'))->findAll();
-    return $this->response->setJSON($transactions);
-}
+
+    public function yearly()
+    {
+        $data = [
+            'query' => [],
+            'results' => [],
+            'status' => ["code" => 401, "description" => "Unauthorized"]
+        ];
+
+        $headers = $this->request->headers();
+        $postData = $this->request->getPost();
+
+        $data['query'] = $postData;
+
+        array_walk($headers, function (&$value, $key) {
+            $value = $value->getValue();
+        });
+
+        if ($headers["Key"] == $this->apiKey) {
+            if ($postData['type'] == 'transaction') {
+                $result = $this->transaction->select('COUNT(*) as jml')->like('created_at', $postData['tahun'], 'after')->first();
+                $data['results'] = $result;
+                $data['status'] = ["code" => 200, "description" => "OK"];
+            } elseif ($postData['type'] == 'earning') {
+                $result = $this->transaction->select('sum(total_harga) as jml')->like('created_at', $postData['tahun'], 'after')->first();
+                $data['results'] = $result;
+                $data['status'] = ["code" => 200, "description" => "OK"];
+            } elseif ($postData['type'] == 'user') {
+                $result = $this->user->select('COUNT(*) as jml')->like('created_at', $postData['tahun'], 'after')->first();
+                $data['results'] = $result;
+                $data['status'] = ["code" => 200, "description" => "OK"];
+            }
+        }
+
+        return $this->respond($data);
+    }
+
+
 }
