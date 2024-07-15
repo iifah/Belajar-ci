@@ -21,17 +21,18 @@ class ApiController extends ResourceController
      *
      * @return ResponseInterface
      */
-    public function index()
-    {
-        //
-    }
-
     function __construct()
     {
         $this->user = new UserModel();
         $this->transaction = new TransactionModel();
         $this->transaction_detail = new TransactionDetailModel();
     }
+    
+    public function index()
+    {
+        //
+    }
+
 
     /**
      * Return the properties of a resource object.
